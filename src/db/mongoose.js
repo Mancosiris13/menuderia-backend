@@ -17,9 +17,6 @@ const options = {
 // Create Mongoose object
 // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
 const client = mongoose
-  .connect(
-    'mongodb+srv://Mancosiris13:Osiris99@cluster0.pifwvtu.mongodb.net/',
-    options
-  )
+  .connect(process.env.MONGODB_URL, options)
   .then(() => console.log('Connected to MongoDB'))
   .catch((error) => console.error('Failed to connect to MongoDB:', error));
