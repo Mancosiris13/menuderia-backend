@@ -2,6 +2,8 @@ const express = require('express');
 
 const Dish = require('../models/dish');
 
+const Order = require('../models/order');
+
 const router = new express.Router();
 
 //************* CREATE DISH ENDPOINT****************//
@@ -129,6 +131,45 @@ router.delete('/deleteProduct/:id', async (req, res) => {
     res.status(200).send(product);
   } catch (e) {
     res.status(500).send();
+  }
+});
+
+// DELETE ALIMENTO FROM ORDER ENDPOINT
+router.delete('/orders/:orderId/delete/:productId', async (req, res) => {
+  const orderID = req.params.orderId;
+  const productID = req.params.productId;
+
+  try {
+    const order = await Order.findById(orderID);
+
+    // Find the alimento to be deleted based on its _id
+    const alimentoToDelete = order.alimentos.find(
+      (alimento) => alimento._id.toString() === productID
+    );
+
+    if (!alimentoToDelete) {
+      return res.status(404).json({ message: 'Alimento not found in order' });
+    }
+
+    // Subtract alimento.precio from order.total
+    order.total -= alimentoToDelete.precio * alimentoToDelete.cantidad;
+
+    // Filter out the alimento to be deleted from alimentos array
+    order.alimentos = order.alimentos.filter(
+      (alimento) => alimento._id.toString() !== productID
+    );
+
+    // Save the updated order
+    await order.save();
+
+    res
+      .status(200)
+      .json({ message: 'Alimento deleted from order successfully' });
+  } catch (e) {
+    console.error(e);
+    res
+      .status(500)
+      .send('An error occurred while deleting the alimento from order');
   }
 });
 

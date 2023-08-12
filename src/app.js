@@ -9,9 +9,9 @@ const newProductsAddedToExistingOrdersRouter = require('./routers/newProductsAdd
 
 const app = express();
 
-// app.use(cors({ origin: 'http://localhost:3000' }));
+// app.use(cors({ origin: 'http://localhost:3000' })); ///Uncomment for local development
 
-app.use(cors());
+app.use(cors()); /// Uncomment for production
 
 app.use(express.json());
 
